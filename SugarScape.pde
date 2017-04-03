@@ -2,9 +2,11 @@ import java.util.*;
 
 SugarGrid myGrid;
 
- Square[][] s;
+Square[][] s;
 
 GrowthRule sg = new SeasonalGrowbackRule(0, 0, 0, 0, 0);
+
+Graph g = new Graph(5, 5, 500, 500, "x-axis", "y-axis");
 
 
 void setup(){
@@ -28,8 +30,9 @@ void setup(){
      myGrid.addAgentAtRandom(ag);
   }
   */
-
   
+  g.update(myGrid);
+
     
   myGrid.placeAgent(ag,25,15);
   
@@ -42,5 +45,6 @@ void setup(){
 void draw(){
   myGrid.update();
   background(255);
+  g.update(myGrid);
   myGrid.display();
 }

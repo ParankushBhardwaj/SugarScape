@@ -134,6 +134,25 @@ class SugarGrid {
   }
  
  
+  //returns a list of all agents on the SugarGrid at present.
+  public ArrayList<Agent> getAgents() {
+     
+     ArrayList<Agent> allAgents = new ArrayList<Agent>();
+     
+     //go through each grid
+     for (int i = 0; i < w; i++) {
+          for (int j = 0; j < h; j++) {
+            //add agent to list if there is one
+            if(s[i][j].getAgent() != null){
+              allAgents.add(s[i][j].getAgent());
+            }
+          }
+      }
+      //return list of agents
+      return allAgents;
+  }
+ 
+ 
  // Random rand = new Random(); //used for random location
   
    public void addAgentAtRandom(Agent a) {
@@ -156,30 +175,6 @@ class SugarGrid {
        gridOfEmptyAgents.get((int)randomNum).setAgent(a);
        
    }
-   
-   /*
-       //generate random x and y positions for agent a
-       int randomX = (int)(random(0, this.w + 1));
-       int randomY = (int)(random(0, this.h + 1));
-       
-       //int lifespan = (int)(random(minAge, maxAge + 1));
-       
-       //if those positions are taken, find new random positions.
-       while(s[randomX][randomY].getAgent() != null){
-         randomX = (int)(random(0, this.w + 1));
-         randomY = (int)(random(0, this.h + 1)); 
-       }
-       
-       //then put the agent in those positions, assuming those posistions are not null
-       //we check twice for null (once with while loop and then with if loop) becayse 
-       //it could be that every position is already filled, and thus adding more agents is simply not possible.
-       if (s[randomX][randomY].getAgent() == null) {
-           s[randomX][randomY].setAgent(a);
-       }
-       
-   }
-   
-   */
   
   public LinkedList<Square> generateVision(int row, int col, int radius) {
     //create a list of squares, length of list determined by radius.
@@ -203,7 +198,7 @@ class SugarGrid {
         }
         else {
       
-            vision.add(s[row][col]); //add current location for vision.
+            vision.add(s[row][col]p); //add current location for vision.
             
             //first check rightwards, including if it goes off the grid.
             if (row + i >= w){  
@@ -293,9 +288,6 @@ class SugarGrid {
         }
     }
   }
-  
-  
-
 
   void display() {
     for (int i = 0; i < w; i++) {
@@ -303,6 +295,7 @@ class SugarGrid {
           s[i][j].display(sideLength);
       }
     }
-    
   }
+  
+  
 }
