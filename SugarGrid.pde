@@ -198,7 +198,7 @@ class SugarGrid {
         }
         else {
       
-            vision.add(s[row][col]p); //add current location for vision.
+            vision.add(s[row][col]); //add current location for vision.
             
             //first check rightwards, including if it goes off the grid.
             if (row + i >= w){  
@@ -297,5 +297,4 @@ class SugarGrid {
     }
   }
   
-  
-}
+} 

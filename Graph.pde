@@ -20,7 +20,6 @@ class Graph {
     this.yLab = yLab;
   }
   
-  
   public void update(SugarGrid g) {
     
    this.g = g;
@@ -43,7 +42,9 @@ class Graph {
    rotate(-PI/2.0);
    text(yLab, 0, 0 );
    popMatrix();
+   
   }  
+  
 }
 
 
