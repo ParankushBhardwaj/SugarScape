@@ -104,19 +104,21 @@ abstract class LineGraph extends Graph {
 
 abstract class CDFGraph extends Graph {
   int callsPerValue;
+  int numUpdates;
+  int numberOfCallsPerValue;
   
   /* Passes various values to the superclass constructor, and stores callsPerValue for its own use. 
   `  Also sets an internal counter (numUpdates) to zero, and an internal variable storing the number of calls per value.
   */
-  
   public CDFGraph(int x, int y, int howWide, int howTall, String xlab, String ylab, int callsPerValue) {
       super(x, y, howWide, howTall, xlab, ylab);
       this.callsPerValue = callsPerValue;
       
       //Also sets an internal counter (numUpdates) to zero
-      int numUpdates = 0;
+      numUpdates = 0;
+      
       // an internal variable storing the number of calls per value.
-      int numberOfCallsPerValue = callsPerValue;
+      numberOfCallsPerValue = callsPerValue;
   }
   
   
@@ -158,6 +160,13 @@ abstract class CDFGraph extends Graph {
   
  
  class  WealthCDF extends CDFGraph {
+   
+    ArrayList<Agent> agents = new ArrayList<Agent>();
+    
+    int sugarSoFar = 0;
+    
+    int totalSugar = 0;
+    
     public WealthCDF(int x, int y, int howWide, int howTall, String xlab, String ylab, int callsPerValue) {
       super(x, y, howWide, howTall, xlab, ylab, callsPerValue);
     }
@@ -165,26 +174,57 @@ abstract class CDFGraph extends Graph {
     public void reset(SugarGrid g) {
       
       //Stores in a field of this class an ArrayList<Agent> sorted by sugar levels
-      ArrayList<Agent> agents = g.getAgents();
+      agents = g.getAgents();
       
       //You may use any sort from Question 3 or 4 above.
       QuickSorter quickSort = new QuickSorter();
       quickSort.sort(agents);
       
       // Stores in another field of this class the total sugar owned by all agents.
-      int totalSugar = 0;
+      totalSugar = 0;
       for (int i = 0; i < agents.size(); i ++){
         totalSugar += agents.get(i).getSugarLevel();
       }
       
       //Also sets a counter sugarSoFar to 0.
-      int sugarSoFar = 0;
+      sugarSoFar = 0;
  
     }
   
   
    public int nextPoint(SugarGrid g)  {
-   
+     
+       //used to compute sugar average level
+       int totalSugar = 0;
+     
+       //Uses the numUpdates stored in the superclass to compute the number of Agents that have been graphed so far
+       int graphedSoFar = numUpdates;
+       
+       //Gets the next callsPerValue agents out of the list that was created by reset() above.
+       ArrayList<Agent> nextAgents = new ArrayList<Agent>();
+       
+       for(int i = callsPerValue; i < agents.size(); i++) {
+         nextAgents.add(agents.get(i));    
+       }
+       
+       //Computes the average sugar level of those agents, and adds it to sugarSoFar.
+       for(int i = 0; i < nextAgents.size(); i++) {
+           totalSugar += nextAgents.get(i).getSugarLevel();
+       }
+       
+       //compute average/
+       int averageSugarLevel = totalSugar/nextAgents.size();
+       
+       //add Sugar level 
+       sugarSoFar += averageSugarLevel;
+       
+       //Returns the fraction sugarSoFar/totalSugar
+       int returnValue = sugarSoFar/totalSugar;
+       
+       //If fewer than callsPerValue agents remain that have not yet been graphed, 
+       //graph the average of all remaining agents instead.
+       
+       return returnValue;
    }
 
    public int getTotalCalls(SugarGrid g) {
