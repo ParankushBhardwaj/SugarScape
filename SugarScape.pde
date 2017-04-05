@@ -20,16 +20,16 @@ void setup(){
   size(1000,800);
   
         //Tester for algorithms.
-        InsertionSorter sorter = new InsertionSorter();
+        QuickSorter sorter = new QuickSorter();
 
         ArrayList<Agent> input = new ArrayList<Agent>();
           
         ArrayList<Integer> sortThese = new ArrayList<Integer>();
         
-        for (int i = 0; i < 30000; i++) {
+        for (int i = 0; i < 4000; i++) {
           
          Random ran = new Random();
-          int x = ran.nextInt(30000) + 0;
+          int x = ran.nextInt(40000) + 0;
           sortThese.add(x);
           input.add(new Agent(1, 1, sortThese.get(i), new PollutionMovementRule()));
         }

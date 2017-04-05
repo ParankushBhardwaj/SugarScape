@@ -17,7 +17,6 @@ abstract class Sorter {
     
 }
 
-
 class BubbleSorter extends Sorter {
   
   public void sort(ArrayList<Agent> al) {
@@ -135,6 +134,8 @@ class InsertionSorter extends Sorter {
    
 }
 
+
+
 class MergeSorter extends Sorter {
    
     ArrayList<Agent> list;
@@ -213,6 +214,7 @@ class MergeSorter extends Sorter {
     }
   
 }
+
 
 class QuickSorter extends Sorter {
     

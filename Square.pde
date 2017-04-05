@@ -95,7 +95,7 @@ class Square {
         this.a = a;
       }     
       else {
-        assert(1==0);
+        //assert(1==0);
       }
     }
   }
