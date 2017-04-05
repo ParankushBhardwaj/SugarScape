@@ -6,6 +6,12 @@ Square[][] s;
 
 GrowthRule sg = new SeasonalGrowbackRule(0, 0, 0, 0, 0);
 
+Graph g = new Graph(50, 700, 50, 50, "x-axis", "y-axis");
+
+PollutionMovementRule pr = new PollutionMovementRule();
+
+AgentFactory af = new AgentFactory(1, 10, 1, 1, 20, 50, pr);
+
 //Graph g = new Graph(900, 700, 50, 50, "x-axis", "y-axis");
 
 
@@ -14,40 +20,50 @@ void setup(){
   size(1000,800);
   
         //Tester for algorithms.
-        
-        /*
-        QuickSorter sorter = new QuickSorter();
+        InsertionSorter sorter = new InsertionSorter();
 
         ArrayList<Agent> input = new ArrayList<Agent>();
-  
-        Agent a1 = new Agent(1, 1, 7, new PollutionMovementRule());
+          
+        ArrayList<Integer> sortThese = new ArrayList<Integer>();
         
-        //Agent b = new Agent(1, 1, 4, new PollutionMovementRule());
-        //Agent c = new Agent(1, 1, 9, new PollutionMovementRule());
-        //Agent d = new Agent(1, 1, 4, new PollutionMovementRule());
-        //Agent e = new Agent(1, 1, 2, new PollutionMovementRule());
-        //Agent f = new Agent(1, 1, 2, new PollutionMovementRule());
-        //Agent gq = new Agent(1, 1, 1, new PollutionMovementRule());
-              
-         input.add(a1);
-         //input.add(b);
-         //input.add(c);
-         //input.add(d);
-         //input.add(e);
-         //input.add(f);
-         //input.add(gq);
+        for (int i = 0; i < 30000; i++) {
+          
+         Random ran = new Random();
+          int x = ran.nextInt(30000) + 0;
+          sortThese.add(x);
+          input.add(new Agent(1, 1, sortThese.get(i), new PollutionMovementRule()));
+        }
+       
+        /*     
+        Agent b = new Agent(1, 1, 4, new PollutionMovementRule());
+        Agent c = new Agent(1, 1, 9, new PollutionMovementRule());
+        Agent d = new Agent(1, 1, 4, new PollutionMovementRule());
+        Agent e = new Agent(1, 1, 2, new PollutionMovementRule());
+        Agent f = new Agent(1, 1, 2, new PollutionMovementRule());
+        Agent gq = new Agent(1, 1, 1, new PollutionMovementRule());
+         input.add(b);
+         input.add(c);
+         input.add(d);
+         input.add(e);
+         input.add(f);
+         input.add(gq);
+          */
+       
                 
         sorter.sort(input);
-        
+                    
+          
         for(Agent i:input){
             System.out.print(i.getSugarLevel());
             System.out.print(", ");
         }
-        */
-  
         
-  myGrid = new SugarGrid(100,100,20, sg);
+        
+        
   
+    
+      
+  myGrid = new SugarGrid(100,100,20, sg);
     
   //myGrid.addSugarBlob(15,15,2,5);
   //myGrid.addSugarBlob(10,10,1,10);
@@ -73,9 +89,9 @@ void setup(){
 }
 
 void draw(){
-  myGrid.update();
-  background(255);
-  myGrid.display();
-  
-  Graph g = new Graph(900, 700, 50, 50, "x-axis", "y-axis");
+   myGrid.update();
+   background(255);
+   myGrid.display();
+   g.update(myGrid);
+
 }

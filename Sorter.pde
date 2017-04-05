@@ -28,9 +28,11 @@ class BubbleSorter extends Sorter {
   //allows counter to be 0 for first run.
   boolean firstTimeRunning = true;
   
-  //keep looping through the list if it either just got sorted or is the first time running.
-  while(hasBeenSorted != 0 || firstTimeRunning) {
+  int counter = 0;
   
+  //keep looping through the list if it either just got sorted or is the first time running.
+ // while(hasBeenSorted != 0 || firstTimeRunning) {
+  while(counter < al.size()) {
     //no longer first time running.
     firstTimeRunning = false;
     
@@ -42,24 +44,26 @@ class BubbleSorter extends Sorter {
          Agent first = al.get(i);
          Agent second = al.get(i+1);
          
-         //check to see if they are null (in case)
-         if (first == null || second == null) {
-           break;
-         }
          
          //if the first element is less than the second one..
-         if (lessThan(first, second) == true) {
+         if (lessThan(second, first) == false) {
            //good! 
          }
-         //else if the first one is larger than the second one...
-         else if (lessThan(first, second) == false) {
+         
+         if(first.getSugarLevel() > second.getSugarLevel()) {
            //swap the first and second ones.
-           Collections.swap(al, i, i+1);
+           //Collections.swap(al, i, i+1);
+           Agent placeholder = al.get(i);
+           al.set(i, second);
+           al.set(i+1, placeholder);
+
 
            //increment sorter counter.
            hasBeenSorted++;
          }
       }
+      counter++;
+
     }
   }
   
@@ -76,8 +80,10 @@ class InsertionSorter extends Sorter {
   //allows counter to be 0 for first run.
   boolean firstTimeRunning = true;
   
+  int counter = 0;
+  
   //keep looping through the list if it either just got sorted or is the first time running.
-  while(hasBeenSorted != 0 || firstTimeRunning) {
+  while(counter < list.size()) {
   
     //no longer first time running.
     firstTimeRunning = false;
@@ -122,6 +128,7 @@ class InsertionSorter extends Sorter {
            hasBeenSorted++;
          }
       }
+      counter++;
     }
   }
    
@@ -208,8 +215,7 @@ class MergeSorter extends Sorter {
 }
 
 class QuickSorter extends Sorter {
-   
-   
+    
    public void sort(ArrayList<Agent> al) {
         
       //create 2 lists, B.P and A.P. (before pivot and after pivot).
@@ -247,22 +253,15 @@ class QuickSorter extends Sorter {
       
      
      //find size of before and after pivot lists
-     for ( int i = 0; i < al.size()-1; i++ ) {
-       /*
-         if (lessThan(al.get(i), pivot) == true) {
-             sizeOfBeforePivot++;
-         }
-         else {
-             sizeOfAfterPivot++;
-         }
-      */  
+     for (int i = 0; i < al.size()-1; i++) { 
          if (al.get(i).getSugarLevel() <= pivot.getSugarLevel()) {
            sizeOfBeforePivot++;
          }
          else {
-             sizeOfAfterPivot++;
+            sizeOfAfterPivot++;
          }
      }
+     
      
      beforePivot = new ArrayList<Agent>(sizeOfBeforePivot);
      //initialize size of the arraylists
@@ -271,6 +270,7 @@ class QuickSorter extends Sorter {
      }
      
      afterPivot = new ArrayList<Agent>(sizeOfAfterPivot);
+     //initialize size of the arraylists
      for (int i = 0; i < sizeOfAfterPivot; i++) {
         afterPivot.add(al.get(i));
      }
@@ -280,17 +280,8 @@ class QuickSorter extends Sorter {
      int beforeCounter = 0;
      int afterCounter = 0;
      
+     
      for (int q = 0; q < al.size() - 1; q++) {
-        /*
-       if (lessThan(al.get(q), pivot) == true) {
-             beforePivot.set(beforeCounter, al.get(q));
-             beforeCounter++;
-         }
-         else {
-             afterPivot.set(afterCounter, al.get(q));
-             afterCounter++;
-         }
-      */    
          
          if(al.get(q).getSugarLevel() <= pivot.getSugarLevel()) {
              beforePivot.set(beforeCounter, al.get(q));

@@ -149,7 +149,7 @@ abstract class CDFGraph extends Graph {
     //While numUpdates is less than getTotalCalls() in the subclass, 
     while(numUpdates < getTotalCalls(g)) {
       //Draw a rectangle numPerCell wide, 1 pixel tall, starting at (numUpdates, nextPoint()).
-      rect(numUpdates, nextPoint(g), numPerCell, nextPoint(g)+1);
+      rect(numUpdates, nextPoint(g), 1, 1);
       
       //Increase numUpdates by 1.
       numUpdates++;
@@ -212,7 +212,7 @@ abstract class CDFGraph extends Graph {
            totalSugar += nextAgents.get(i).getSugarLevel();
        }
        
-       //compute average/
+       //compute average
        int averageSugarLevel = totalSugar/nextAgents.size();
        
        //add Sugar level 
@@ -220,6 +220,8 @@ abstract class CDFGraph extends Graph {
        
        //Returns the fraction sugarSoFar/totalSugar
        int returnValue = sugarSoFar/totalSugar;
+       
+       
        
        //If fewer than callsPerValue agents remain that have not yet been graphed, 
        //graph the average of all remaining agents instead.
@@ -231,22 +233,11 @@ abstract class CDFGraph extends Graph {
      //returns the total number of agents in g, divided by callsPerValue.
      return g.getAgents().size() / callsPerValue;
    }
+   
+   
+   
+   
  }
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
   
   
   
