@@ -18,49 +18,6 @@ AgentFactory af = new AgentFactory(1, 10, 1, 1, 20, 50, pr);
 void setup(){
 
   size(1000,800);
-  
-        //Tester for algorithms.
-        QuickSorter sorter = new QuickSorter();
-
-        ArrayList<Agent> input = new ArrayList<Agent>();
-          
-        ArrayList<Integer> sortThese = new ArrayList<Integer>();
-        
-        for (int i = 0; i < 4000; i++) {
-          
-         Random ran = new Random();
-          int x = ran.nextInt(40000) + 0;
-          sortThese.add(x);
-          input.add(new Agent(1, 1, sortThese.get(i), new PollutionMovementRule()));
-        }
-       
-        /*     
-        Agent b = new Agent(1, 1, 4, new PollutionMovementRule());
-        Agent c = new Agent(1, 1, 9, new PollutionMovementRule());
-        Agent d = new Agent(1, 1, 4, new PollutionMovementRule());
-        Agent e = new Agent(1, 1, 2, new PollutionMovementRule());
-        Agent f = new Agent(1, 1, 2, new PollutionMovementRule());
-        Agent gq = new Agent(1, 1, 1, new PollutionMovementRule());
-         input.add(b);
-         input.add(c);
-         input.add(d);
-         input.add(e);
-         input.add(f);
-         input.add(gq);
-          */
-       
-                
-        sorter.sort(input);
-                    
-          
-        for(Agent i:input){
-            System.out.print(i.getSugarLevel());
-            System.out.print(", ");
-        }
-        
-        
-        
-  
     
       
   myGrid = new SugarGrid(100,100,20, sg);
