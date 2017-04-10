@@ -31,23 +31,16 @@ class SocialNetworkNode {
   }
   
   
-  
-  
-  
   //Returns the agent stored at this node.
   public Agent getAgent() {
     return a;
   }
   
-  
+  /*
   public void addNeighbors(SocialNetworkNode node){
-    
       neighbors.add(node);
-      
-      
   }
-  
-  
+  */
   
   
 }

@@ -251,7 +251,6 @@ class QuickSorter extends Sorter {
      
      //System.out.println();
      //System.out.print("Pivot = " + pivot.getSugarLevel());
-
       
      
      //find size of before and after pivot lists
