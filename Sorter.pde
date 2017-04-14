@@ -71,7 +71,7 @@ class BubbleSorter extends Sorter {
 
 class InsertionSorter extends Sorter {
       
-    public void sort(ArrayList<Agent> list) {
+  public void sort(ArrayList<Agent> list) {
   
   //counter used to check if more sorts have to be done.
   int hasBeenSorted = 0;
