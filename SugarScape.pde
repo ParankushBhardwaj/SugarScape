@@ -1,54 +1,64 @@
 import java.util.*;
 
 SugarGrid myGrid;
-
 Square[][] s;
 
-GrowthRule sg = new SeasonalGrowbackRule(0, 0, 0, 0, 0);
 
-Graph g = new Graph(50, 700, 50, 50, "x-axis", "y-axis");
+GrowthRule sg = new SeasonalGrowbackRule(1, 1, 1, 1, 1);
 
 PollutionMovementRule pr = new PollutionMovementRule();
 
 AgentFactory af = new AgentFactory(1, 10, 1, 1, 20, 50, pr);
 
-//Graph g = new Graph(900, 700, 50, 50, "x-axis", "y-axis");
+SocialNetwork sn = new SocialNetwork(myGrid);
 
+Demo d = new Demo();
+
+ArrayList<Agent> agents = new ArrayList<Agent>();
 
 void setup(){
 
   size(1000,800);
-    
-      
-  myGrid = new SugarGrid(100,100,20, sg);
-    
-  //myGrid.addSugarBlob(15,15,2,5);
-  //myGrid.addSugarBlob(10,10,1,10);
-  //myGrid.addSugarBlob(30,20,1,15);
-  myGrid.addSugarBlob(25,15,1,10);
-  //myGrid.addSugarBlob(20,20,1,10);
   
-  Agent ag = new Agent(1, 1, 4, new PollutionMovementRule());
+  myGrid = new SugarGrid(100, 100, 20, new GrowbackRule(0));
+  sn = new SocialNetwork(myGrid);
+  
+  
+  myGrid.addSugarBlob(10, 20, 3, 20);
+  myGrid.addSugarBlob(40, 50, 3, 20); 
+  myGrid.addSugarBlob(30, 90, 3, 20);
 
-  /*
-  for (int i = 0; i < 1; i++){
-     Agent ag = new Agent(1, 1, 4, new PollutionMovementRule());
-     myGrid.addAgentAtRandom(ag);
+  for(int i = 0; i < 7; i++) {
+    agents.add(af.makeAgent());
+    myGrid.addAgentAtRandom(agents.get(i));
   }
-  */
-    
-  myGrid.placeAgent(ag,25,15);
   
-  //myGrid.addAgentAtRandom(ag);
-  myGrid.display();
-  frameRate(100);
+  sn = new SocialNetwork(myGrid);
 
+  
+  
 }
 
 void draw(){
-   myGrid.update();
-   background(255);
-   myGrid.display();
-   g.update(myGrid);
+  
+  frameRate(1);
+  background(255);
+  d.viz();
 
+  myGrid.update();
+  
+  print(myGrid.getAgents().size());
+
+  for(int i = 0; i < agents.size(); i++) {
+    for(int j = 0; j < agents.size(); j++) {
+        //print(sn.listOfAgents.size());
+       if(sn.adjacent(sn.getNode(agents.get(i)), sn.getNode(agents.get(j)))) {
+       
+         println("is connected!");
+         
+       }
+    }
+  }
+  
+  
 }

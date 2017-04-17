@@ -112,7 +112,7 @@ class Agent {
     s.setSugar(0);
   }
   
-  public void display(int x, int y, int scale){
+  public void display(float x, float y, int scale){
     fill(0);
     ellipse(x, y, 3*scale/4, 3*scale/4);
   }

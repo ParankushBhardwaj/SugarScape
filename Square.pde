@@ -84,6 +84,9 @@ class Square {
   }
   
   public void setAgent(Agent a) { //this.a == current, a = specified.
+  
+    this.a = a;
+    
     if (this.a == null) {
       this.a = a;
     }
@@ -107,7 +110,6 @@ class Square {
     
     fill(255, 255, 255 - sugarLevel/6.0*255);
     rect(size*x, size*y, size, size);
-    
     
     if (a != null) {
       a.display(size*x + size/2, size*y + size/2, size);

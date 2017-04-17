@@ -38,32 +38,30 @@ class SocialNetwork {
   
   int w;
   
-  
+  ArrayList<Agent> listOfAgents = new ArrayList<Agent>();
+
  
   public SocialNetwork(SugarGrid g) {
-    
-    
-      if(g.getWidth() == 0 && g.getHeight() == 0) {
-        g = null;
-      }
-      
+       
+      this.grid = g;
+            
       if(grid != null) {
+              
+        this.w = grid.getWidth();
+      
+        this.h = grid.getHeight();
+      
+        this.agents = grid.getAgents();
         
-        this.grid = g;
-      
-        this.w = g.getWidth();
-      
-        this.h = g.getHeight();
-      
-        this.agents = new ArrayList<Agent>(grid.getAgents());
+        this.nodes = new ArrayList<SocialNetworkNode>();
       
         for(int i = 0; i < agents.size(); i++) {
            SocialNetworkNode node = new SocialNetworkNode(agents.get(i));
            nodes.add(node);
+           network = new boolean[nodes.size()][nodes.size()];
         }
       
-        network = new boolean[nodes.size()][nodes.size()];
-      
+          //network = new boolean[nodes.size()][nodes.size()];
       
         for(int i = 0; i < nodes.size(); i++) {
           for(int j = 0; j < nodes.size(); j++) {
@@ -82,43 +80,61 @@ class SocialNetwork {
   
   public boolean adjacent(SocialNetworkNode i, SocialNetworkNode j) {
     
-    connected = new ArrayList<Agent>();
     
-    int iVision = i.getAgent().getVision();
+    if(i == null || j == null) {
+      return false;
+    }
     
+    //get agent at x
+    Agent agentX = i.getAgent();
+        
     for(int x = 0; x < w; x++) {
       for(int y = 0; y < h; y++) {
-        if(grid.getAgentAt(x, y) == i.getAgent()) {
-          for(int a = 1; a < iVision; a++) {
-            connected.add(grid.getAgentAt(x + a, y));
-            connected.add(grid.getAgentAt(x, y + a));
-            connected.add(grid.getAgentAt(x - a, y));
-            connected.add(grid.getAgentAt(x, y - a));
-          }
+        
+        //if the agent in the grid is not empty and is equal to the first node...
+        //get the agent in node i.
+        if(grid.getAgentAt(x, y) != null && grid.getAgentAt(x, y).equals(agentX)) {
           
-          if(connected.contains(j.getAgent())) {
-            return true;
+          
+          //create a linked list of squares
+          //find the squares that surround agent x (in node i).
+          LinkedList<Square> visionForX = grid.generateVision(x, y, agentX.getVision());
+          
+          //go through the squres in the vision, check if any contain the square in node j.
+          for(int a = 0; a < visionForX.size(); a++) {
+            
+            Agent agentAtSquare = visionForX.get(a).getAgent();
+          
+            if(agentAtSquare != null && agentAtSquare.equals(j.getAgent())) {
+              return true;
+            } 
           }
         }
       }
     }
-    
     return false;
   }
+  
+  
+  
   
   
  
  public List<SocialNetworkNode> seenBy(SocialNetworkNode x) {
    
    List<SocialNetworkNode> seenBy = new ArrayList<SocialNetworkNode>();
+
+   if(x == null || x.getAgent() == null) {
+       return null;
+   }
    
    
    for(int i = 0; i < nodes.size(); i++) {
-     
-     if(adjacent(nodes.get(i), x)) {
-       seenBy.add(nodes.get(i));
+     if(nodes.get(i).getAgent() != null) {
+       if(adjacent(x, nodes.get(i))) {
+         seenBy.add(nodes.get(i));
+       }
      }
-    
    }
    
    return seenBy;
@@ -130,12 +146,14 @@ class SocialNetwork {
    
    List<SocialNetworkNode> sees = new ArrayList<SocialNetworkNode>();
    
+   if(y == null || nodes != null || nodes.size() == 0) {
+     return null;
+   }
+   
    for(int i = 0; i < nodes.size(); i++) {
-     
      if(adjacent(y, nodes.get(i))) {
        sees.add(nodes.get(i));
      }
-    
    }
    return sees;
  } 
@@ -143,8 +161,11 @@ class SocialNetwork {
  
  
  public void resetPaint() {
-   for(int i = 0; i < nodes.size(); i++) {
-     nodes.get(i).unpaint();
+   
+   if(nodes != null) {
+     for(int i = 0; i < nodes.size(); i++) {
+       nodes.get(i).unpaint();
+     }
    }
  }
  
@@ -165,9 +186,11 @@ class SocialNetwork {
    }
    
     for(int v = 0; v < nodes.size(); v++) {
-      if(nodes.get(v).getAgent() == a) {
-         return nodes.get(v);
-       }
+      if(nodes.get(v).getAgent() != null) {
+        if(nodes.get(v).getAgent() == a) {
+           return nodes.get(v);
+         }
+      }
     }
     
     return null;
@@ -175,15 +198,24 @@ class SocialNetwork {
  
  
  public boolean pathExists(Agent x, Agent y)  {
+   
+   if(x == null || y == null) {
+     return false;
+   }
+   
+   if(getNode(x) == null || getNode(y) == null) {
+     return false;
+   }
+   
+   
    //get nodes.
    SocialNetworkNode xNode = getNode(x);
    SocialNetworkNode yNode = getNode(y);
    
-   if(xNode == null || yNode == null) {
-     return false;
-   }
    
+   //list of nodes x can see.
    ArrayList<SocialNetworkNode> xSee = new ArrayList<SocialNetworkNode>(sees(xNode));
+   
    
    for(int i = 0; i < xSee.size(); i++) {
      if(xSee.get(i).painted == false) {
@@ -197,6 +229,7 @@ class SocialNetwork {
      
    }
    return false;
+   
  }
  
  
@@ -204,8 +237,7 @@ class SocialNetwork {
    
    ArrayList<SocialNetworkNode> shortestPath = new ArrayList<SocialNetworkNode>();
    
-   ArrayList<Agent> listOfAgents = new ArrayList<Agent>();
-
+   listOfAgents = new ArrayList<Agent>();
 
    //check if x = y, or if one of those two are null.
    if(x == null || y == null) {
@@ -250,6 +282,8 @@ class SocialNetwork {
              }
              return listOfAgents;
            }
+  
+           
          }
        }
     }
@@ -261,4 +295,27 @@ class SocialNetwork {
   
   
   
+  public void display() {
+    
+    int xCenter = 250;
+    int yCenter = 300;
+    
+    //draw the main circle.
+    ellipseMode(CENTER);
+    ellipse(xCenter, yCenter, 500, 500);
+    
+   
+    //coords for agents
+    int xPos = 100;
+    int yPos = 100;
+    
+    //add agents around the circle.
+    for(int i = 0; i < listOfAgents.size(); i++){
+      fill(0);
+      rect(xCenter, 50, xCenter + 1, 1);
+    }
+    
+    
+  }
+
 }
