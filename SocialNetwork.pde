@@ -42,6 +42,10 @@ class SocialNetwork {
 
  
   public SocialNetwork(SugarGrid g) {
+    
+      if(g.getWidth() == 0 && g.getHeight() == 0) {
+          g = null;
+      }
        
       this.grid = g;
             
@@ -53,7 +57,12 @@ class SocialNetwork {
       
         this.agents = grid.getAgents();
         
-        this.nodes = new ArrayList<SocialNetworkNode>();
+        for(int i = 0; i < agents.size(); i++) {
+           SocialNetworkNode node = new SocialNetworkNode(agents.get(i));
+           nodes.add(node);
+        }
+        
+        //this.nodes = new ArrayList<SocialNetworkNode>();
       
         for(int i = 0; i < agents.size(); i++) {
            SocialNetworkNode node = new SocialNetworkNode(agents.get(i));
@@ -80,34 +89,38 @@ class SocialNetwork {
   
   public boolean adjacent(SocialNetworkNode i, SocialNetworkNode j) {
     
-    
     if(i == null || j == null) {
       return false;
     }
-    
+       
+    connected = new ArrayList<Agent>();
+
     //get agent at x
     Agent agentX = i.getAgent();
+    int iVision = i.getAgent().getVision();
+
+    
         
     for(int x = 0; x < w; x++) {
       for(int y = 0; y < h; y++) {
         
         //if the agent in the grid is not empty and is equal to the first node...
         //get the agent in node i.
-        if(grid.getAgentAt(x, y) != null && grid.getAgentAt(x, y).equals(agentX)) {
+        if(grid.getAgentAt(x, y) == i.getAgent()) {
           
-          
-          //create a linked list of squares
-          //find the squares that surround agent x (in node i).
-          LinkedList<Square> visionForX = grid.generateVision(x, y, agentX.getVision());
-          
-          //go through the squres in the vision, check if any contain the square in node j.
-          for(int a = 0; a < visionForX.size(); a++) {
+          for(int a = 1; a < iVision; a++) {
+            connected.add(grid.getAgentAt( Math.abs(x + a) % w, y));
             
-            Agent agentAtSquare = visionForX.get(a).getAgent();
+            connected.add(grid.getAgentAt(x, Math.abs(y + a) % h) );
+            
+            connected.add(grid.getAgentAt( Math.abs(x - a) % w, y));
+            
+            connected.add(grid.getAgentAt(x , Math.abs(y - a) % h ));
+            
+          }
           
-            if(agentAtSquare != null && agentAtSquare.equals(j.getAgent())) {
-              return true;
-            } 
+          if(connected.contains(j.getAgent())) {
+            return true;
           }
         }
       }
@@ -122,18 +135,15 @@ class SocialNetwork {
  
  public List<SocialNetworkNode> seenBy(SocialNetworkNode x) {
    
-   List<SocialNetworkNode> seenBy = new ArrayList<SocialNetworkNode>();
-
-   if(x == null || x.getAgent() == null) {
+    if(x == null || x.getAgent() == null) {
        return null;
    }
    
+   List<SocialNetworkNode> seenBy = new ArrayList<SocialNetworkNode>();
    
    for(int i = 0; i < nodes.size(); i++) {
-     if(nodes.get(i).getAgent() != null) {
-       if(adjacent(x, nodes.get(i))) {
-         seenBy.add(nodes.get(i));
-       }
+     if(adjacent(nodes.get(i), x)) {
+       seenBy.add(nodes.get(i));
      }
    }
    
@@ -186,11 +196,9 @@ class SocialNetwork {
    }
    
     for(int v = 0; v < nodes.size(); v++) {
-      if(nodes.get(v).getAgent() != null) {
-        if(nodes.get(v).getAgent() == a) {
-           return nodes.get(v);
-         }
-      }
+      if(nodes.get(v).getAgent() == a) {
+         return nodes.get(v);
+       }
     }
     
     return null;
@@ -291,31 +299,6 @@ class SocialNetwork {
    
    //if path from x to y do not exist.
    return null;
-  }
-  
-  
-  
-  public void display() {
-    
-    int xCenter = 250;
-    int yCenter = 300;
-    
-    //draw the main circle.
-    ellipseMode(CENTER);
-    ellipse(xCenter, yCenter, 500, 500);
-    
-   
-    //coords for agents
-    int xPos = 100;
-    int yPos = 100;
-    
-    //add agents around the circle.
-    for(int i = 0; i < listOfAgents.size(); i++){
-      fill(0);
-      rect(xCenter, 50, xCenter + 1, 1);
-    }
-    
-    
   }
 
 }

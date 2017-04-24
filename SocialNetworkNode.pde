@@ -35,7 +35,7 @@ class SocialNetworkNode {
   
   //Returns the agent stored at this node.
   public Agent getAgent() {
-    return a;
+    return this.a;
   }
   
   /*
