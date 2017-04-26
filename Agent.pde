@@ -11,7 +11,12 @@ class Agent {
   
   int maxAge = 0;
   
+  char sex;
+  
   MovementRule m;
+  
+  Random rand = new Random();
+
 
   public Agent(int metabolism, int vision, int initialSugar, MovementRule m) {
     this.metabolism = metabolism;
@@ -20,7 +25,52 @@ class Agent {
     this.m = m;
     
     age = 0;
+    
+    int  numbForSex = rand.nextInt(100) + 1;
+    
+    if(numbForSex < 50) {
+      this.sex = 'X';
+    }
+    else {
+      this.sex = 'Y';
+    }
+
   }
+  
+  public Agent(int metabolism, int vision, int initialSugar, MovementRule mr, char sex) {
+     this.metabolism = metabolism;
+    this.vision = vision;
+    this.initialSugar = initialSugar;
+    this.m = mr;
+    
+    if(sex == 'X' || sex == 'Y') {
+      this.sex = sex;
+    }
+    else {
+      assert(1==0);
+    }
+  
+  }
+  
+  
+  public char getSex() {
+    return sex;
+  }
+  
+  
+  public void gift(Agent other, int amount) {
+  
+      //Provided that this agent has at least amount sugar, 
+      if(initialSugar >= amount) {
+           //transfers that amount from this agent to the other agent. 
+           other.setSugarLevel(initialSugar);
+           initialSugar = initialSugar - initialSugar;
+      }
+      else {
+          assert(1==0);
+      }
+  }
+  
 
   public int getMetabolism() {
     return metabolism;
@@ -33,6 +83,11 @@ class Agent {
   public int getSugarLevel() {
     return initialSugar;
   }
+  
+  public void setSugarLevel(int x) {
+    initialSugar = initialSugar + x;
+  }
+  
   
   public MovementRule getMovementRule() {
     return m;

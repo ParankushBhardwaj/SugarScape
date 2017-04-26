@@ -7,10 +7,10 @@ class ReplacementRule {
   //SugarSeekingMovementRule mr;
   //LinkedList<Square> neighbourhood
   
-  LinkedList<Agent> agents;
+  //LinkedList<Agent> agents;
+  //LinkedList<Integer> ages;
   
-  LinkedList<Integer> ages;
-  
+  HashMap<Agent, Integer> agentWithAge;
 
 
   public ReplacementRule(int minAge, int maxAge, AgentFactory fac) {
@@ -19,6 +19,7 @@ class ReplacementRule {
     
     this.fac = fac;
   }
+  
 
 
   public boolean replaceThisOne(Agent a) {
