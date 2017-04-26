@@ -18,6 +18,9 @@ class SugarGrid {
   Square center;
   Square current;
   
+  FertilityRule fr;
+  ReplacementRule replace;
+  
   //int max;
   
   public SugarGrid(int w, int h, int sideLength, GrowthRule g){
@@ -250,6 +253,11 @@ class SugarGrid {
     }
    
     return vision;
+  }
+  
+  
+  public void killAgent(Agent a) {
+    a.deleteSugar();
   }
 
   

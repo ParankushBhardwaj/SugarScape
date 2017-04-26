@@ -16,6 +16,9 @@ class Agent {
   MovementRule m;
   
   Random rand = new Random();
+  
+  
+  boolean[] culture = new boolean[11];
 
 
   public Agent(int metabolism, int vision, int initialSugar, MovementRule m) {
@@ -34,6 +37,15 @@ class Agent {
     else {
       this.sex = 'Y';
     }
+    
+    //init culture
+    culture = new boolean[11];
+    
+    //each cell of the array is set to a value selected uniformly at random in all constructors. 
+    for(int i = 0; i < culture.length; i++) {
+      
+      culture[i] = rand.nextBoolean();
+    }
 
   }
   
@@ -49,6 +61,18 @@ class Agent {
     else {
       assert(1==0);
     }
+    
+    
+    //init culture
+    culture = new boolean[11];
+    
+    //each cell of the array is set to a value selected uniformly at random in all constructors. 
+    for(int i = 0; i < culture.length; i++) {
+      
+      culture[i] = rand.nextBoolean();
+    }
+    
+    
   
   }
   
@@ -86,6 +110,11 @@ class Agent {
   
   public void setSugarLevel(int x) {
     initialSugar = initialSugar + x;
+  }
+  
+  //for SPARTA!
+  public void deleteSugar() {
+    initialSugar = 0;
   }
   
   
@@ -159,18 +188,80 @@ class Agent {
     }
   }
   
-  
-  
-  
   public void eat(Square s) {
     initialSugar = initialSugar + s.getSugar();
     s.setSugar(0);
   }
   
+  
+  public void influence(Agent other)  {
+    
+    //picks a random number between 1 and 11.
+    int  cultureRand = rand.nextInt(11) + 1;
+
+    //If other's culture does not match this Agent's culture in the selected cultural attribute, 
+    //then mutate other's culture to match the culture of this agent.
+    if(other.culture[cultureRand] != this.culture[cultureRand]) {
+        other.culture[cultureRand] = this.culture[cultureRand];
+    }
+    
+    
+    
+  }
+  
+  public void nurture(Agent parent1, Agent parent2)  {
+    
+
+    for(int i = 0; i < culture.length; i++) {
+       
+      boolean x = rand.nextBoolean();
+
+      if(x) {
+        culture[i] = parent1.culture[i];
+      }
+      else {
+        culture[i] = parent2.culture[i];
+      }
+      
+    }
+    
+    
+  }
+  
+  public boolean getTribe() {
+    
+    int numberOfTrues = 0;
+    int numberOfFalse = 0;
+    
+    for(int i = 0; i < culture.length; i++){
+      if(culture[i] == true) {
+        numberOfTrues++;
+      }
+      else {
+        numberOfFalse++;
+      }
+    }
+    
+    if(numberOfTrues > numberOfFalse) {
+      return true;
+    }
+    else {
+      return false;
+    }
+  }
+  
+  
+  
   public void display(float x, float y, int scale){
     fill(0);
     ellipse(x, y, 3*scale/4, 3*scale/4);
   }
+  
+  
+  
+  
+  
+  
   
   
 }
