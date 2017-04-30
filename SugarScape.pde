@@ -10,7 +10,7 @@ void setup() {
   myGrid.addSugarBlob(30, 30, 5, 5);
 
   for (int i = 0; i < 100; i++) {
-    Agent ag = new Agent(1, 1, 50, new CombatMovementRule(10));
+    Agent ag = new Agent(1, 1, 50, new SugarSeekingMovementRule());
     myGrid.addAgentAtRandom(ag);
   }
 
