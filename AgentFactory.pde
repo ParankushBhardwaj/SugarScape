@@ -21,6 +21,9 @@ class AgentFactory {
     this.m = m;
   }
 
+
+  //given the parameters for all the agent's attribtues, makes bunch of divers 
+  //agents very quickly.
   public Agent makeAgent() {
 
     //generate the metaboism, vision, and sugar for the agent by randomly selecting between min and max values
