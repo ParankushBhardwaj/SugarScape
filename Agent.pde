@@ -292,7 +292,16 @@ class Agent {
       return false;
     }
   }
-
+  
+  
+  public void display(int x, int y, int scale) {
+    
+    stroke(0);
+    fill(0);
+    ellipse(x,y,(3*scale)/4,(3*scale)/4);
+  }
+  
+   
    public void display(int x, int y, int scale, boolean culture, boolean fertility, boolean sex, FertilityRule FertRule) {
     
      if (culture == true) {
