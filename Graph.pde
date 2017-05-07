@@ -22,22 +22,24 @@ class Graph {
   }
 
   public void update(SugarGrid g){
-    strokeWeight(5);
-    stroke(255);
+   
+    //white rectangle
     fill(255);
     rect(x, y, howWide, howTall);
+    
+    //borders for rectangle
     stroke(0);
-    textSize(min(howWide, howTall) / 12);
     line(x, y + howTall, x + howWide, y + howTall);
     line(x, y + howTall, x, y);
     
-    //sideways text.
+//min(howWide, howTall)
+    //labels for axis.
     fill(0);
-    text(xLab, x + (howWide/3), y + howTall + min(howWide,howTall) / 12);
+    text(xLab, x + (howWide/2.5), (y + howTall) + howTall / 10);
     pushMatrix();
     translate(x,y);
     rotate(-PI/2.0);
-    text(yLab, -howTall, -10);
+    text(yLab, -howTall + 50, -10);
     popMatrix();
   }
 }
@@ -72,20 +74,6 @@ abstract class LineGraph extends Graph {
 
 
 
-//shows total agents.
-public class PopulationGraph extends LineGraph {
-
-  public PopulationGraph(int x, int y, int howWide, int howTall, String xlab, String ylab) {
-    super(x, y, howWide, howTall, xlab, ylab);
-  }
-
-  public int nextPoint(SugarGrid g) {
-    ArrayList<Agent> agents = g.getAgents();
-    return (int)(agents.size() / 2);
-  }
-}
-
-
 //shows avg. sugar 
 public class SugarGraph extends LineGraph {
 
@@ -112,33 +100,6 @@ public class SugarGraph extends LineGraph {
 }
 
 
-//shows avg metabolism 
-public class MetabolismGraph extends LineGraph {
-
-  public MetabolismGraph(int x, int y, int howWide, int howTall, String xlab, String ylab) {
-    super(x, y, howWide, howTall, xlab, ylab);
-  }
-
-  public int nextPoint(SugarGrid g) {
-    int avg = 0;
-    int total = 0;
-    
-    ArrayList<Agent> a = g.getAgents();
-    
-    for (int i = 0; i < a.size(); i++) {
-      Agent current = a.get(i);
-      total += (current.getMetabolism() * 5);
-    }
-    
-    if (a.size() < 2) {
-      return total;
-    } else {
-      avg = total / a.size();
-      return avg;
-    }
-  }
-  
-}
 
 
 //shows avg. age
@@ -155,7 +116,7 @@ public class AgeGraph extends LineGraph {
       totalAge = totalAge + agents.get(i).getAge();
     }      
     
-    if(agents.size() > 1) {
+    if(agents.size() > 0) {
       return (4 * totalAge)/agents.size();
     }
     else {
