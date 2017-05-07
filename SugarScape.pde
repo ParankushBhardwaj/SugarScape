@@ -4,9 +4,9 @@ SugarGrid myGrid;
 LinkedList<Graph> toPlot;
 
 //below booleans are used for display.
-boolean culture = false;
+boolean culture = true;
 boolean fertility = false;
-boolean sex = true;
+boolean sex = false;
 
 void setup() {
 
@@ -100,8 +100,8 @@ void keyPressed() {
 
   }
   else{
-    sex = true;
-    culture = false;
+    sex = false;
+    culture = true;
     fertility = false;
     text(" ", 850, 35);
 
