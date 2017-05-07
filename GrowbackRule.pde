@@ -6,22 +6,27 @@ public interface GrowthRule {
 
 
 
-
+//this class updates the sugar level based on the alpha rate.
 class GrowbackRule implements GrowthRule {
 
   private int rate;
 
+  //Initializes a new GrowbackRule with the specified growth rate.
   public GrowbackRule(int rate) {
     this.rate = rate;
   }
 
-
+  // Increases the sugar in Square s by the growth rate, up to the maximum value that can be stored in s.
   public void growBack(Square s) {
     s.setSugar(s.getSugar() + rate);
   }
+  
 }
 
 
+
+//this class makes it so that the grid has differnet growth rules in different areas.
+//this resembles how earth has different seasons in different sides, affecting world productivity.
 class SeasonalGrowbackRule implements GrowthRule {
 
   int alpha;
@@ -30,22 +35,13 @@ class SeasonalGrowbackRule implements GrowthRule {
   int equator;
   int numSquares;
 
-  //String[] seasons = { "northSummer", "southSummer"};
-
-  //String season = "northSummer";
-
+ 
   boolean isNorth = true;
 
 
 
-  //StringBuffer whatSeason = new StringBuffer("Summer");
-
-  //StringBuffer north = new StringBuffer("northSummer");
-  //StringBuffer south = new StringBuffer("southSummer");
-
   int counterForTrackingTheSeason = 0;
 
-  //int counterForAlternatingBetweenSeasons = 0;
 
   public SeasonalGrowbackRule(int alpha, int beta, int gamma, int equator, int numSquares) {
     this.alpha = alpha;
