@@ -216,6 +216,7 @@ class CombatMovementRule extends SugarSeekingMovementRule {
       target.setAgent(null);
 
       //increase wealth of middle's agent by causalty's sugar level and alpha
+      
       middle.getAgent().initialSugar = (casualty.getSugarLevel() + alpha);
 
       g.killAgent(casualty);
