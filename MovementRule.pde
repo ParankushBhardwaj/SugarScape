@@ -2,29 +2,27 @@ import java.util.*;
 
 
 public interface MovementRule {
+  
   public Square move(LinkedList<Square> neighbourhood, SugarGrid g, Square middle);
-}
+  }
 
 class SugarSeekingMovementRule implements MovementRule {
-
+  
   Square s;
 
   public Square move(LinkedList<Square> neighbourhood, SugarGrid g, Square middle) {
 
-    Collections.shuffle(neighbourhood); // squares are randomized.
-
-    if (neighbourhood.peek() != null) {
-      s = neighbourhood.getFirst();
-    }
+    // squares are randomized so you can pick a random place.
+    Collections.shuffle(neighbourhood); 
+    s = neighbourhood.get(0);
 
 
-    for (int i = 0; i < neighbourhood.size(); i++) {      
-      if (neighbourhood.get(i).getSugar() > s.getSugar()) {
-        s = neighbourhood.get(i);
-      } else if (neighbourhood.get(i).getSugar() == s.getSugar()) {
-        //use euc distance to find distance between both squares from middle
-        //whichever one is closer to the middle becomes the new s.
-        if (g.euclidianDistance(s, middle) > g.euclidianDistance(neighbourhood.get(i), middle)) {
+    for(int i = 0; i < neighbourhood.size(); i++) {
+      if(neighbourhood.get(i).getSugar() > s.getSugar()) {
+          s = neighbourhood.get(i);
+      }
+      else if (neighbourhood.get(i).getSugar() == s.getSugar()){
+        if (g.euclidianDistance(middle, neighbourhood.get(i)) < g.euclidianDistance(middle, s)) {
           s = neighbourhood.get(i);
         }
       }
@@ -32,7 +30,6 @@ class SugarSeekingMovementRule implements MovementRule {
     return s;
   }
 }
-
 
 
 
@@ -78,13 +75,13 @@ class PollutionMovementRule implements MovementRule {
           bestSquare = currentSquare;
           bestRatio = currentRatio;
         } else if (currentSquare.getSugar() < bestSquare.getSugar()) {
-          bestSquare = bestSquare;
+          //bestSquare = bestSquare;
         } else if (currentSquare.getSugar() == bestSquare.getSugar()) {
           if (g.euclidianDistance(currentSquare, middle) < g.euclidianDistance(bestSquare, middle)) {
             bestSquare = currentSquare;
             bestRatio = currentRatio;
           } else {
-            bestSquare = bestSquare;
+            //bestSquare = bestSquare;
           }
         }
       } else if (bestRatio == currentRatio && bestRatio != 0) {
@@ -92,7 +89,7 @@ class PollutionMovementRule implements MovementRule {
           bestSquare = currentSquare;
           bestRatio = currentRatio;
         } else {
-          bestSquare = bestSquare;
+          //bestSquare = bestSquare;
         }
       } else if (bestRatio > currentRatio) { //if the current ratio has less pollution for ever sugar then the best square so far ...
         bestRatio = currentRatio;
@@ -104,10 +101,11 @@ class PollutionMovementRule implements MovementRule {
   }
 }   
 
+
+
 class CombatMovementRule extends SugarSeekingMovementRule {
 
   int alpha;
-
 
   //ArrayList<LinkedList<Square>> listOfVisions = new ArrayList<LinkedList<Square>>();
   LinkedList<Square> newNeighbors = new LinkedList<Square>();
@@ -122,53 +120,60 @@ class CombatMovementRule extends SugarSeekingMovementRule {
     this.alpha = alpha;
   }
 
-
   public Square move(LinkedList<Square> neighbourhood, SugarGrid g, Square middle) {
-    
-    
-    LinkedList<Square>updatedList = neighbourhood;
+
+
+    //this list will be updated by the method below.
+    LinkedList<Square> updatedList = neighbourhood;
 
     //remove any square from neighborhood that contains a agent of the same tribe as the middle square.
     for (int i = 0; i < neighbourhood.size(); i++) {  
-
       if (neighbourhood.get(i).getAgent() == null) {
         //do nothing.
       } else if (neighbourhood.get(i).getAgent().getTribe() == middle.getAgent().getTribe()) {
         //neighbourhood.remove(i);
         updatedList.remove(i);
-      }
-      else {
-      //also remove any agent square that has a agent with more sugar
-      //if (neighbourhood.get(i).getAgent() != null) {
+      } else {
+        //also remove any agent square that has a agent with more sugar
+        //if (neighbourhood.get(i).getAgent() != null) {
         if (neighbourhood.get(i).getAgent().getSugarLevel() >= middle.getAgent().getSugarLevel()) {
-            //neighbourhood.remove(i);
-            updatedList.remove(i);
+          //neighbourhood.remove(i);
+          updatedList.remove(i);
         }
       }
     }
     
+
     neighbourhood = updatedList;
 
+    //use updatedList for removal again. 
+    updatedList = neighbourhood;
+    
     //now for the remaining squares, get the vision agent middle would have for each one.
     for (int a = 0; a < neighbourhood.size(); a++) { 
       LinkedList<Square> visions = g.generateVision(neighbourhood.get(a).getX(), neighbourhood.get(a).getY(), middle.getAgent().getVision());
 
-      // If the vision contains any Agent with more sugar than the Agent on middle,
       for (int b = 0; b < visions.size(); b++) {
         if (visions.get(b).getAgent() == null) {
-          //do nothing.
-        } else if (visions.get(b).getAgent().getSugarLevel() > middle.getAgent().getSugarLevel()) {
+          //do nothing, just a quick null check 
+         } 
+         
+         // If the vision contains any Agent with more sugar than the Agent on middle,...
+         else if (visions.get(b).getAgent().getSugarLevel() > middle.getAgent().getSugarLevel()) {
 
-          // and the opposite tribe, 
+          //...and the opposite tribe, 
           if (visions.get(b).getAgent().getTribe() != middle.getAgent().getTribe()) {
 
             //then move that entire square rom the neighbourhood.
-            neighbourhood.remove(a);
+            updatedList.remove(a);
             break;
           }
         }
       }
     }
+
+    neighbourhood = updatedList;
+
 
 
     //Replace each Square in neighbourhood that still has an Agent with a new Square that has the same x and y coordinates,
@@ -184,11 +189,13 @@ class CombatMovementRule extends SugarSeekingMovementRule {
         newNeighbors.add(new Square(neighbourhood.get(c).getX(), neighbourhood.get(c).getY(), newSugar, newMaxSugar));
       }
     }    
+    
+
 
     //call super classes movement method, should return best square.
     //move(LinkedList<Square> neighbourhood, SugarGrid g, Square middle)
-
     Square newTarget = super.move(newNeighbors, g, middle);
+
 
     //now find the square from neighbourhood that has same x and y values as newTarget.
     for (int d = 0; d < neighbourhood.size(); d++) {
@@ -202,7 +209,6 @@ class CombatMovementRule extends SugarSeekingMovementRule {
       }
     }
 
-
     if (target != null && target.getAgent() != null) {      
       casualty = target.getAgent();
 
@@ -210,14 +216,13 @@ class CombatMovementRule extends SugarSeekingMovementRule {
       target.setAgent(null);
 
       //increase wealth of middle's agent by causalty's sugar level and alpha
-      middle.getAgent().setSugarLevel(casualty.getSugarLevel() + alpha);
+      middle.getAgent().initialSugar = (casualty.getSugarLevel() + alpha);
 
       g.killAgent(casualty);
 
       return target;
     }
-    
+
     return null;
   }
-  
- }
+}
