@@ -1,80 +1,101 @@
+import java.util.*;
+
 class FertilityRule {
 
+  //below maps are used to determine the childbearing age/climacteric age for each sex.
+
+  //ex: the map {'X' -> [12,15], 'Y' ->[12,15]} might be used to indicate that the start 
+  //of the childbearing period is between 12 and 15 years (inclusive) for both sexes.
   Map<Character, Integer[]> childbearingOnset;
 
+  //climacteric means the period of decrease in reproductive capacity.
+  //this map tells us the age group of each sex for when they no longer 
+  //can reproduce.
   Map<Character, Integer[]> climactericOnset;
 
-
+  //new hashmap
   Map<Agent, int[]> agentMap;
+
+  //holds sugar value
+  int currentSugar;
 
   Random rand = new Random();
 
-  //below array is used for random ages for sex
-  int[] randChildClim = new int[2];
 
-  //holds sugar value 
-  int currentSugar;
-
-
-
-
+  //constructor, initializes all the maps. (see above for map descriptions).
   public FertilityRule(Map<Character, Integer[]> childbearingOnset, Map<Character, Integer[]> climactericOnset) {
     this.childbearingOnset = childbearingOnset;
     this.climactericOnset = climactericOnset;
+    this.agentMap = new HashMap<Agent, int[]>();
   }
 
 
+  //Below method determines whether Agent a is fertile
   public boolean isFertile(Agent a) {
-    if (a == null || a.isAlive() == false) {
-      //remove all records of it from any storage it may be present in, then return false
+    if (a == null) {
+      //null exception error check. 
       return false;
     }
 
-    // Generate a random number for the onset of childbearing age (c) 
+    if (a.isAlive() == false) {
+      //remove all records of it from any storage it may be present in
+      agentMap.remove(a);
+      return false;
+    }
+    
+    
 
-    boolean x = rand.nextBoolean();
+    //if this is the first time agent is being passed this function, 
+    //then it dones't have a age group for childbrearing/climacterics.
+    //so give it a random one from its predetermined range.
+    if (agentMap.containsKey(a) == false) {
 
-    if (x == true) {
-      randChildClim[0] = childbearingOnset.get("X")[0];
-    } else if (x == false) {
-      randChildClim[0] = childbearingOnset.get("X")[1];
+      //get the array of integers within the childbearing map.
+      Integer[] childbearingPeriod = childbearingOnset.get(a.getSex());
+
+      //now get the age period for climactericOnset
+      Integer[] climactericPeriod = climactericOnset.get(a.getSex());
+
+      //now randomly select from both those groups to determine the agent's cb/cl
+      int childbearingAge = (int)random(childbearingPeriod[0], childbearingPeriod[1] + 1);
+
+      int climactericAge =  (int)random(climactericPeriod[0], climactericPeriod[1] + 1);
+      
+      int sugar = a.getSugarLevel();
+
+
+      //also store sugar level for later retrieval.
+      int[] fertilityAgesAndSugar = {childbearingAge, climactericAge, sugar};
+
+      //agent map now holds the agent and its childbearing/climateric age/sugar.
+      agentMap.put(a, fertilityAgesAndSugar);
+
     }
 
 
+    //array holding fertility ages.
+    int[] whenFertile = agentMap.get(a);
 
-    //Generate a random number for the age of the start of a's climacteric (o),        
+    //returns true when the childbearing age is <= a.getAge() 
+    //and when a.getAge() < climacteric age.
+    //and if 'a' has at least same amount of sugar as first time it passed this function.
 
-    boolean y = rand.nextBoolean();
+    //we check sugar because the book says that to be parents, 
+    //agents must have ammased at least the amount of sugar that they 
+    //were endowed with at birth.
 
-    if (y == true) {
-      randChildClim[1] = climactericOnset.get("X")[0];
-    } else if (y == false) {
-      randChildClim[1] = climactericOnset.get("X")[1];
-    }
-
-
-    //Store those generated numbers in a way that is associated with a for later retrieval.
-    agentMap.put(a, randChildClim);
-
-    //Store the current sugar level of a for retrieval as well.
-    currentSugar = a.getSugarLevel();
-
-
-    //c <= a.getAge() < o, using the values of c and o that were stored for this agent earlier.
-    //a currently has at least as much sugar as it did the first time we passed it to this function.
-
-    if ( randChildClim[0] <= a.getAge() && a.getSugarLevel() == currentSugar) {
+    if (whenFertile[0] <= a.getAge() && whenFertile[1] >  a.getAge() && whenFertile[2] <= a.getSugarLevel()) {
       return true;
+    } else { 
+      return false;
     }
-
-
-    return false;
   }
+  
+  
 
+  //this method checks if two agents can breed.
   public boolean canBreed(Agent a, Agent b, LinkedList<Square> local) {
 
-    boolean nearby = false;
-    boolean space = false;
     /*
       TRUE if : 
      a is fertile.
@@ -82,47 +103,62 @@ class FertilityRule {
      a and b are of different sexes.
      b is on one of the Squares in local.
      At least on of the Squares in local is empty. 
-     */
-
-    if (isFertile(a) && isFertile(b) && a.getSex() != b.getSex()) {
-
-      for (int i = 0; i < local.size(); i++) {
-        if (local.get(i).getAgent() == b) {
-          nearby = true;
-        }
-        if (local.get(i).getAgent() == null) {
-          space = true;
+    */
+ 
+    
+    boolean squareIsInLocal = false;
+    boolean localSquareIsEmpty = false;
+    
+      //if a and b are fertile and different sexes
+      if (isFertile(a) && isFertile(b) && a.getSex() != b.getSex()) {
+        for (int i = 0; i < local.size(); i++) {
+          
+          //and if b is in one of the squares in local
+          if (local.get(i).getAgent() != null) {
+            if (local.get(i).getAgent().equals(b)) {
+              squareIsInLocal = true;
+            }
+          }
+          
+          //and at least one square in local is empty
+          if (local.get(i).getAgent() == null) {
+            localSquareIsEmpty = true;
+          }
+          
         }
       }
-
-      if (nearby == true && space == true) {
-        return true;
-      }
-    }
-
-    return false;
+ 
+     //if all four are true, then return true.
+     if(squareIsInLocal == true && localSquareIsEmpty == true) {
+       return true;
+     }
+     else {
+      return false;
+     }
   }
 
 
+
+  //Creates and places a new Agent that is the offspring of a and b
   public Agent breed(Agent a, Agent b, LinkedList<Square> aLocal, LinkedList<Square> bLocal) {
 
-
     //If a cannot breed with b and b cannot breed with a, then return null. 
-    if (canBreed(a, b, aLocal) == true && canBreed(b, a, bLocal) == true) {
+    if (canBreed(a, b, aLocal) == false && canBreed(b, a, bLocal) == false) {
       return null;
     }
-
-
+    
+    
     //Pick one of the parents' metabolisms, uniformly at random.
     int agentMetabolism;
 
-    boolean meta = rand.nextBoolean();
+    boolean momsMetabolism = rand.nextBoolean();
 
-    if (meta) {
+    if (momsMetabolism == true) {
       agentMetabolism = a.getMetabolism();
     } else {
       agentMetabolism = b.getMetabolism();
     }
+
 
 
     //Pick one of the parents' visions, uniformly at random.
@@ -130,22 +166,18 @@ class FertilityRule {
 
     boolean vision = rand.nextBoolean();
 
-    if (vision) {
+    if (vision == true) {
       agentVision = a.getVision();
     } else {
       agentVision = b.getVision();
     }
-
-
-    //create sugar by taking half from each parent.
-    int dadSugar = a.getSugarLevel()/2;
-    int momSugar = b.getSugarLevel()/2;
-
-    int agentSugar = dadSugar + momSugar;
-
+    
+    
 
     //get a movement rule for the agent
     MovementRule mr = a.getMovementRule();
+
+
 
 
     //pick a sex for the agent at random
@@ -153,41 +185,47 @@ class FertilityRule {
 
     boolean sex = rand.nextBoolean();
 
-    if (sex) {
-      agentSex = a.getSex();
+    if (sex == true) {
+      agentSex = 'X';
     } else {
-      agentSex = b.getSex();
+      agentSex = 'Y';
     }
 
 
     //now create the new baby agent!
-    Agent baby = new Agent(agentMetabolism, agentVision, agentSugar, mr, agentSex);
+    Agent baby = new Agent(agentMetabolism, agentVision, 0, mr, agentSex);
+    
+    
+    //give the baby half sugar from both parents so it doesn't instantly die.
+    a.gift(baby,agentMap.get(a)[2]/2);
+    b.gift(baby,agentMap.get(b)[2]/2);
 
-
-    //below boolean function checks to see if the baby was placed somewhere already.
-    boolean placed = false;
-
-
-    //place baby on empty square in either a or b.
-    for (int i = 0; i < aLocal.size(); i++) {
-      if (aLocal.get(i).getAgent() == null) {
-        aLocal.get(i).setAgent(baby);
-        placed = true;
-      }
-    }
-
-    if (placed == false) {
-      for (int i = 0; i < bLocal.size(); i++) {
-        if (bLocal.get(i).getAgent() == null) {
-          bLocal.get(i).setAgent(baby);
-          placed = true;
-        }
-      }
-    }
 
     //now give the baby some culture!
     baby.nurture(a, b);
+    
 
+    //to place the baby, get a list of possible squares it can go to.
+    
+    //LinkedList<Square> babySquares = getEmptySquare(aLocal,bLocal);
+    LinkedList<Square> babySquares  = new LinkedList<Square>();
+    
+    for (int i = 0; i < aLocal.size(); i++) {
+      if (aLocal.get(i).getAgent() == null) {
+        babySquares.add(aLocal.get(i));
+      }
+    }
+    
+    for (int i = 0; i < bLocal.size(); i++) {
+      if (bLocal.get(i).getAgent() == null) {
+        babySquares.add(bLocal.get(i));
+      }
+    }
+
+    
+    //now pick a square randomly.
+    Collections.shuffle(babySquares);
+    babySquares.get(0).setAgent(baby);
 
     return baby;
   }
