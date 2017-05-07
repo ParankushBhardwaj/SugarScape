@@ -96,6 +96,20 @@ class Square {
       this.a = agent;
     }
   }
+  
+  
+  public void display(int size) {
+    
+    stroke(255);
+    strokeWeight(4);
+
+    fill(255, 255 , 255 - (this.sugarLevel/4.0)*255);
+    rect(size * x, size * y, size, size);
+    
+    if (a != null) {
+      a.display((size * x) + (size/2),(size * y) + (size/2), size);
+    }
+  }
 
 
   
