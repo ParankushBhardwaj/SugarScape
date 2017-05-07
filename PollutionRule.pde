@@ -1,4 +1,3 @@
-
 class PollutionRule {
 
   int gatheringPollution;
